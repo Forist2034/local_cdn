@@ -1,0 +1,4 @@
+packages:
+  ./utils/hs/nodejs-semver/nodejs-semver.cabal
+  ./library/jquery/release/jquery-release.cabal
+  ./website/ajax.googleapis.com/html/ajax-googleapis-com.cabal

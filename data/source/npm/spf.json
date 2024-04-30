@@ -1,0 +1,55 @@
+{
+  "drv_name": "spf",
+  "versions": {
+    "2.0.0": {
+      "drv_name": "spf-2.0.0",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.0.0.tgz",
+      "hash": "sha512-4DOLgyiJH4CQG8RGRXXuSgJd0IY6z/TBRBmWmpDe3Kej4MMoLJK+orTEMUV0XDAKkDascscmSGsbEAQHNLmMgw=="
+    },
+    "2.0.1": {
+      "drv_name": "spf-2.0.1",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.0.1.tgz",
+      "hash": "sha512-i8UJI7spGlv4bWPUVnTBdyWVO8f1o76djFzcfWxAZ4z2Ua7+i9VGlA8pOtSWLpdzS9Qi/sVkNKmO/sFQ5KJ+Dg=="
+    },
+    "2.1.0": {
+      "drv_name": "spf-2.1.0",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.1.0.tgz",
+      "hash": "sha512-qzzLUykj/DiXsQ5Ex3TqljywlyvclO0rwWojycoKBwity2aAnXZPY2LjXoXBzvFxgqgmYXb9x3UHt7djTKSPkg=="
+    },
+    "2.1.1": {
+      "drv_name": "spf-2.1.1",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.1.1.tgz",
+      "hash": "sha512-rXjdvrTbOfoQ1MpvESRXV9ifAVVA+bZPZMTACFIDjmBxeIAW9o1u2MeGI66yurWyXu4/2rAvpCtfehoQ+tKP5Q=="
+    },
+    "2.1.2": {
+      "drv_name": "spf-2.1.2",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.1.2.tgz",
+      "hash": "sha512-Lkc8YmMD0+E+z/ZwHBMgMsCy9Y/4IlDdgeMhPuWK4XlFncZ5G/GN3NJQVdm6GEsjtl2ia6gwNFRP5vfHSWmhfQ=="
+    },
+    "2.2.0": {
+      "drv_name": "spf-2.2.0",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.2.0.tgz",
+      "hash": "sha512-qwl4Ao7MGJGlzTWyKtnOgFRZOan18kenohYb+m7kXWhaP6H32uhV4QK39E5PbGnBv5BwcXqO7hx2kAXlaNlbJg=="
+    },
+    "2.3.0": {
+      "drv_name": "spf-2.3.0",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.3.0.tgz",
+      "hash": "sha512-zmP6eqWKRLG5wyTjnTRo95ezEv+oSKM7GoORioSPGIdNUJO0j080qCkAB2u9XfQp0/k2gbZsMDT4kGkCG6ogAg=="
+    },
+    "2.3.1": {
+      "drv_name": "spf-2.3.1",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.3.1.tgz",
+      "hash": "sha512-oZVVv2K2bbGm7kWCf67PR/iKrba7eY7IRaMDwwXRRfyD76JBBVUenbzO96Rp2ucQpGmhtsBJGOFsfgWri0uvRQ=="
+    },
+    "2.3.2": {
+      "drv_name": "spf-2.3.2",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.3.2.tgz",
+      "hash": "sha512-wAlKEScwMBavx19+vjtlMQXWwQ8oEsODqXA/p2TFGJqpNFd1aHyQOpQx6Zyg0MFLdv5wQzIWyKHyUQzCAS3mlQ=="
+    },
+    "2.4.0": {
+      "drv_name": "spf-2.4.0",
+      "url": "https://registry.npmjs.org/spf/-/spf-2.4.0.tgz",
+      "hash": "sha512-CSTvNESUC8ELfoK21OWhEtwnxboC+Q+li4z1fwE9X1ZRCGznY6aTu3lhzqrTGeK7KgdIojdf77ByqmmglHlDtg=="
+    }
+  }
+}

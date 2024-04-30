@@ -1,0 +1,42 @@
+cabal-version: 3.0
+name:          ajax-googleapis-com
+version:       0.1.0.0
+license:       MIT
+license-file:  LICENSE
+maintainer:    avery-dd70@outlook.com
+author:        Avery Rios
+build-type:    Simple
+
+library
+    exposed-modules:
+        Website.AjaxGoogleApis.Html
+        Website.AjaxGoogleApis.Npm
+        Website.AjaxGoogleApis.Lib
+        Website.AjaxGoogleApis.Types
+
+    hs-source-dirs:     src
+    default-language:   Haskell2010
+    default-extensions: OverloadedStrings
+    ghc-options:        -Wall
+    build-depends:
+        base ^>=4.17.2.1,
+        text >=2.0.2 && <2.1,
+        containers >=0.6.7 && <0.7,
+        aeson >=2.2.1 && <2.3,
+        zenacy-html >=2.1.0 && <2.2,
+        nodejs-semver
+
+executable parse-html
+    main-is:          Main.hs
+    hs-source-dirs:   app/parse-html
+    default-language: Haskell2010
+    ghc-options:      -Wall
+    build-depends:
+        base ^>=4.17.2.1,
+        text,
+        bytestring >=0.11.5 && <0.12,
+        aeson,
+        aeson-pretty >=0.8.10 && <0.9,
+        zenacy-html,
+        filepath >=1.4.2 && <1.5,
+        ajax-googleapis-com

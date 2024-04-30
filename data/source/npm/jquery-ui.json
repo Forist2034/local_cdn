@@ -1,0 +1,35 @@
+{
+  "drv_name": "jquery-ui",
+  "versions": {
+    "1.10.4": {
+      "drv_name": "jquery-ui-1.10.4",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.10.4.tgz",
+      "hash": "sha512-VdBz+azK9w7aLfrynqRjhDClgKF57L5fOcj6xDRar/PC0F/WFVD2a5Rfp1W15NYa2kkAvKp1YzAd2/lnGlmOmw=="
+    },
+    "1.12.0": {
+      "drv_name": "jquery-ui-1.12.0",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.12.0.tgz",
+      "hash": "sha512-9sIbqX9tX983WaJhc+8ZfCW/de+o684bKx9N75WvoFxMfGTmuZuUtFAPNxbcYVTO/MGXY+iRA+zvtR5EF1bgDA=="
+    },
+    "1.12.1": {
+      "drv_name": "jquery-ui-1.12.1",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.12.1.tgz",
+      "hash": "sha512-K/kDBMXkTky5LH+gqbMvttU1ipqCTaecKyAFjwHjUnPTVfm5I5PZC7We31iNR3yWtAHNqoxkLoit06lR/gKVlA=="
+    },
+    "1.13.0": {
+      "drv_name": "jquery-ui-1.13.0",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.13.0.tgz",
+      "hash": "sha512-Osf7ECXNTYHtKBkn9xzbIf9kifNrBhfywFEKxOeB/OVctVmLlouV9mfc2qXCp6uyO4Pn72PXKOnj09qXetopCw=="
+    },
+    "1.13.1": {
+      "drv_name": "jquery-ui-1.13.1",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.13.1.tgz",
+      "hash": "sha512-2VlU59N5P4HaumDK1Z3XEVjSvegFbEOQRgpHUBaB2Ak98Axl3hFhJ6RFcNQNuk9SfL6WxIbuLst8dW/U56NSiA=="
+    },
+    "1.13.2": {
+      "drv_name": "jquery-ui-1.13.2",
+      "url": "https://registry.npmjs.org/jquery-ui/-/jquery-ui-1.13.2.tgz",
+      "hash": "sha512-wBZPnqWs5GaYJmo1Jj0k/mrSkzdQzKDwhXNtHKcBdAcKVxMM3KNYFq+iJ2i1rwiG53Z8M4mTn3Qxrm17uH1D4Q=="
+    }
+  }
+}

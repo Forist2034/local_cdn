@@ -1,0 +1,22 @@
+[package]
+name = "nix-prefetch"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.12.4", default-features = false, features = ["json"] }
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+ssri = { version = "9.2.0", features = ["serde"] }
+tempfile = "3.10.1"
+thiserror = "1.0.58"
+tokio = { version = "1.37.0", features = ["fs", "process", "io-util"] }
+tracing = "0.1.40"
+indicatif = { version = "0.17.8", optional = true }
+tracing-indicatif = { version = "0.3.6", optional = true }
+
+[features]
+default = ["progress"]
+progress = ["dep:indicatif", "dep:tracing-indicatif"]

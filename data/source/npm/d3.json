@@ -1,0 +1,165 @@
+{
+  "drv_name": "d3",
+  "versions": {
+    "3.5.17": {
+      "drv_name": "d3-3.5.17",
+      "url": "https://registry.npmjs.org/d3/-/d3-3.5.17.tgz",
+      "hash": "sha512-yFk/2idb8OHPKkbAL8QaOaqENNoMhIaSHZerk3oQsECwkObkCpJyjYwCe+OHiq6UEdhe1m8ZGARRRO3ljFjlKg=="
+    },
+    "4.13.0": {
+      "drv_name": "d3-4.13.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-4.13.0.tgz",
+      "hash": "sha512-l8c4+0SldjVKLaE2WG++EQlqD7mh/dmQjvi2L2lKPadAVC+TbJC4ci7Uk9bRi+To0+ansgsS0iWfPjD7DBy+FQ=="
+    },
+    "5.7.0": {
+      "drv_name": "d3-5.7.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.7.0.tgz",
+      "hash": "sha512-8KEIfx+dFm8PlbJN9PI0suazrZ41QcaAufsKE9PRcqYPWLngHIyWJZX96n6IQKePGgeSu0l7rtlueSSNq8Zc3g=="
+    },
+    "5.8.0": {
+      "drv_name": "d3-5.8.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.8.0.tgz",
+      "hash": "sha512-0rc4LL3fbyWhAqrxOt00svoxB2qoHHo6Bgs0WGcDPZ8ELqbA09evfeCnuy0ZrYbRHc+hCvBZaTT+GW3pnn05fw=="
+    },
+    "5.9.0": {
+      "drv_name": "d3-5.9.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.9.0.tgz",
+      "hash": "sha512-Pl0PO9fwh8WUJzBjEqsujrmSXWp8HzcPEuvFAYKeLAuvnvsQgN6VhwHK/IV6K+Osajl3xdQkxXukbw+ydnLdaQ=="
+    },
+    "5.9.2": {
+      "drv_name": "d3-5.9.2",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.9.2.tgz",
+      "hash": "sha512-ydrPot6Lm3nTWH+gJ/Cxf3FcwuvesYQ5uk+j/kXEH/xbuYWYWTMAHTJQkyeuG8Y5WM5RSEYB41EctUrXQQytRQ=="
+    },
+    "5.9.7": {
+      "drv_name": "d3-5.9.7",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.9.7.tgz",
+      "hash": "sha512-jENytrmdXtGPw7HuSK2S4gxRM1eUGjKvWQkQ6ct4yK+DB8SG3VcnVrwesfnsv8rIcxMUg18TafT4Q8mOZUMP4Q=="
+    },
+    "5.11.0": {
+      "drv_name": "d3-5.11.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.11.0.tgz",
+      "hash": "sha512-LXgMVUAEAzQh6WfEEOa8tJX4RA64ZJ6twC3CJ+Xzid+fXWLTZkkglagXav/eOoQgzQi5rzV0xC4Sfspd6hFDHA=="
+    },
+    "5.12.0": {
+      "drv_name": "d3-5.12.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.12.0.tgz",
+      "hash": "sha512-flYVMoVuhPFHd9zVCe2BxIszUWqBcd5fvQGMNRmSiBrgdnh6Vlruh60RJQTouAK9xPbOB0plxMvBm4MoyODXNg=="
+    },
+    "5.14.2": {
+      "drv_name": "d3-5.14.2",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.14.2.tgz",
+      "hash": "sha512-Ccipa9XrYW5N0QkP6u0Qb8kU6WekIXBiDenmZm1zLvuq/9pBBhRCJLCICEOsH5Og4B0Xw02bhqGkK5VN/oPH0w=="
+    },
+    "5.15.0": {
+      "drv_name": "d3-5.15.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.15.0.tgz",
+      "hash": "sha512-C+E80SL2nLLtmykZ6klwYj5rPqB5nlfN5LdWEAVdWPppqTD8taoJi2PxLZjPeYT8FFRR2yucXq+kBlOnnvZeLg=="
+    },
+    "5.15.1": {
+      "drv_name": "d3-5.15.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.15.1.tgz",
+      "hash": "sha512-Xu9gT6Lm0jH3wWJJSRomFwqnGGi3YAfWIfxNFl4++YVgYOjo3F8V2idAG3nJBgpZOkD0/RHPZX6F4k6tzgOvYw=="
+    },
+    "5.16.0": {
+      "drv_name": "d3-5.16.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-5.16.0.tgz",
+      "hash": "sha512-4PL5hHaHwX4m7Zr1UapXW23apo6pexCgdetdJ5kTmADpG/7T9Gkxw0M0tf/pjoB63ezCCm0u5UaFYy2aMt0Mcw=="
+    },
+    "6.1.1": {
+      "drv_name": "d3-6.1.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.1.1.tgz",
+      "hash": "sha512-bJYW9wlS2uvP2EoMkcPptrUzLMHQKCbiSW+/la8iGSLZgs4KbI/f3Fch4RtnUA9PA+/nPlwyFYzTwDjX80Of8w=="
+    },
+    "6.2.0": {
+      "drv_name": "d3-6.2.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.2.0.tgz",
+      "hash": "sha512-aH+kx55J8vRBh4K4k9GN4EbNO3QnZsXy4XBfrnr4fL2gQuszUAPQU3fV2oObO2iSpreRH/bG/wfvO+hDu2+e9w=="
+    },
+    "6.3.1": {
+      "drv_name": "d3-6.3.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.3.1.tgz",
+      "hash": "sha512-rbaoA67o2N4lO1TCuvrTGQdowNb3zT0z2ygg6TLmJZAd7TRPg+lhbfDOVwQUAgdbRD+73kg2FrEQ9HLiap5H2w=="
+    },
+    "6.5.0": {
+      "drv_name": "d3-6.5.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.5.0.tgz",
+      "hash": "sha512-gr7FoRecKtBkBxelTeGVYERRTPgjPFLh2rOBisHdbXe3RIrVLjCo7COZYMSeFeiwVPOHDtxAGJlvN7XssNAIcg=="
+    },
+    "6.6.0": {
+      "drv_name": "d3-6.6.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.6.0.tgz",
+      "hash": "sha512-fWyMfZDSOLksXeYuiHM/uHap7pKgypUnOGY8jiTfmmAWH1HM6ErPtnHiKEdqs7DtZqbombUgaKwq3B5Pjm7GOQ=="
+    },
+    "6.6.1": {
+      "drv_name": "d3-6.6.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.6.1.tgz",
+      "hash": "sha512-JzCj5GtMYoGCTD+8k1VwKzxTz1KScwHLQHuop8dne5uOc+WtqWEe2smqQrlMyfiCy9ohaD33LFGNTO5Xq3Mtiw=="
+    },
+    "6.6.2": {
+      "drv_name": "d3-6.6.2",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.6.2.tgz",
+      "hash": "sha512-wvC9cZe05bUCo00VFKXLQJWmWhGv0U43Qv0gn+tkl144S7bV22E80Gnp06BEuJVuwVfa6+S8UOfl8H9Ru/cmgA=="
+    },
+    "6.7.0": {
+      "drv_name": "d3-6.7.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-6.7.0.tgz",
+      "hash": "sha512-hNHRhe+yCDLUG6Q2LwvR/WdNFPOJQ5VWqsJcwIYVeI401+d2/rrCjxSXkiAdIlpx7/73eApFB4Olsmh3YN7a6g=="
+    },
+    "7.0.0": {
+      "drv_name": "d3-7.0.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.0.0.tgz",
+      "hash": "sha512-t+jEKGO2jQiSBLJYYq6RFc500tsCeXBB4x41oQaSnZD3Som95nQrlw9XJGrFTMUOQOkwSMauWy9+8Tz1qm9UZw=="
+    },
+    "7.4.2": {
+      "drv_name": "d3-7.4.2",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.4.2.tgz",
+      "hash": "sha512-7VK+QBAWtNDbP2EU/ThkXgjd0u1MsXYYgCK2ElQ4BBWh0usE75tHVVeYx47m2pqQEy4isYKAA0tAFSln0l+9EQ=="
+    },
+    "7.6.1": {
+      "drv_name": "d3-7.6.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.6.1.tgz",
+      "hash": "sha512-txMTdIHFbcpLx+8a0IFhZsbp+PfBBPt8yfbmukZTQFroKuFqIwqswF0qE5JXWefylaAVpSXFoKm3yP+jpNLFLw=="
+    },
+    "7.7.0": {
+      "drv_name": "d3-7.7.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.7.0.tgz",
+      "hash": "sha512-VEwHCMgMjD2WBsxeRGUE18RmzxT9Bn7ghDpzvTEvkLSBAKgTMydJjouZTjspgQfRHpPt/PB3EHWBa6SSyFQq4g=="
+    },
+    "7.8.0": {
+      "drv_name": "d3-7.8.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.0.tgz",
+      "hash": "sha512-a5rNemRadWkEfqnY5NsD4RdCP9vn8EIJ4I5Rl14U0uKH1SXqcNmk/h9aGaAF1O98lz6L9M0IeUcuPa9GUYbI5A=="
+    },
+    "7.8.1": {
+      "drv_name": "d3-7.8.1",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.1.tgz",
+      "hash": "sha512-fdipulGWUYTZTxxU9gDJ2P4mpZL2u7Oqe6n2FI95Q8UY0AjbKNYjPHvhLOsvR+HcSao4vo3YYy4Bk9CWOrt1Vw=="
+    },
+    "7.8.2": {
+      "drv_name": "d3-7.8.2",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.2.tgz",
+      "hash": "sha512-WXty7qOGSHb7HR7CfOzwN1Gw04MUOzN8qh9ZUsvwycIMb4DYMpY9xczZ6jUorGtO6bR9BPMPaueIKwiDxu9uiQ=="
+    },
+    "7.8.3": {
+      "drv_name": "d3-7.8.3",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.3.tgz",
+      "hash": "sha512-cAa866AkPXtt4IzRx6nzGf50uerq6VYks7p/tTH94be4QfhUkyTfJfaxXGPOB5ZRVUZmUV1wcM1dism/Ua0lCw=="
+    },
+    "7.8.4": {
+      "drv_name": "d3-7.8.4",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.4.tgz",
+      "hash": "sha512-q2WHStdhiBtD8DMmhDPyJmXUxr6VWRngKyiJ5EfXMxPw+tqT6BhNjhJZ4w3BHsNm3QoVfZLY8Orq/qPFczwKRA=="
+    },
+    "7.8.5": {
+      "drv_name": "d3-7.8.5",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.8.5.tgz",
+      "hash": "sha512-JgoahDG51ncUfJu6wX/1vWQEqOflgXyl4MaHqlcSruTez7yhaRKR9i8VjjcQGeS2en/jnFivXuaIMnseMMt0XA=="
+    },
+    "7.9.0": {
+      "drv_name": "d3-7.9.0",
+      "url": "https://registry.npmjs.org/d3/-/d3-7.9.0.tgz",
+      "hash": "sha512-e1U46jVP+w7Iut8Jt8ri1YsPOvFpg46k+K8TpCb0P+zjCkjkPnV7WzfDJzMHy1LnA+wj5pLT1wjO901gLXeEhA=="
+    }
+  }
+}

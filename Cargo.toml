@@ -1,0 +1,20 @@
+# workspace file for tools
+
+[workspace]
+resolver = "2"
+members = [
+  "./source/npm/registry",
+  "./source/npm/fetcher",
+  "./source/npm/fetcher_bin",
+  "./library/dojo/fetcher",
+  "./library/dojo/fetcher_bin",
+  #"./library/jquery/fetcher",
+  #"./library/jquery/fetcher-bin",
+  "./library/three.js/fetcher",
+  "./library/three.js/fetcher_bin",
+  "./utils/rs/misc-utils",
+  "./utils/rs/nix-prefetch",
+  "./utils/rs/log-utils",
+  "./website/ajax.googleapis.com/update-rs",
+  "./website/ajax.googleapis.com/update-rs-bin",
+]

@@ -1,0 +1,21 @@
+[package]
+name = "dojo-fetcher"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+const-hex = { version = "1.11.3", features = ["serde"] }
+node-semver = "2.1.0"
+thiserror = "1.0.58"
+tracing = "0.1.40"
+indicatif = "0.17.8"
+tracing-indicatif = "0.3.6"
+reqwest = { version = "0.12.4", default-features = false }
+serde = { version = "1.0.198", features = ["derive"] }
+log-utils = { path = "../../../utils/rs/log-utils" }
+misc-utils = { path = "../../../utils/rs/misc-utils" }
+
+[dev-dependencies]
+hex-literal = "0.4.1"

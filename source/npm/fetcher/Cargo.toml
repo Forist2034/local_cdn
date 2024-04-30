@@ -1,0 +1,18 @@
+[package]
+name = "npm-fetcher"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.12.4", default-features = false, features = ["json"] }
+serde = { version = "1.0.198", features = ["derive"] }
+thiserror = "1.0.58"
+futures = { version = "0.3.30", default-features = false, features = ["std"] }
+tokio = { version = "1.37.0", features = ["rt"] }
+tracing = { version = "0.1.40" }
+tracing-indicatif = { version = "0.3.6" }
+misc-utils = { path = "../../../utils/rs/misc-utils" }
+log-utils = { path = "../../../utils/rs/log-utils" }
+npm-registry = { path = "../registry" }

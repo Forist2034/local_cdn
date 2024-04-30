@@ -1,0 +1,95 @@
+{
+  "drv_name": "three",
+  "versions": {
+    "0.67.0": {
+      "drv_name": "three-0.67.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.67.0.tgz",
+      "hash": "sha512-PH1ZIkrzRGFMx4G8zEBg68L7eNPbWJEr63z5uXlS0F757UdCSHTaMYQZYwDLpiNyf8AgiucC1MuUDO14psspTA=="
+    },
+    "0.68.87": {
+      "drv_name": "three-0.68.87",
+      "url": "https://registry.npmjs.org/three/-/three-0.68.87.tgz",
+      "hash": "sha512-f+SnrCaqLyRUKkcD1iDz8xFVMZ/zIZN+nsfkM8BriJSp8QsTXqSjWRTF0Ul7L6E3HyEcFRR3iBsIHVYFHzp3yw=="
+    },
+    "0.69.0": {
+      "drv_name": "three-0.69.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.69.0.tgz",
+      "hash": "sha512-ZfErElsYaS1d+Oh7xTlXdjJTsOjojkW3fa2upOYL2OyfwrB8U87MK/x1vgwPwsP+lIBvsvk61h0olgai0ztnYA=="
+    },
+    "0.70.1": {
+      "drv_name": "three-0.70.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.70.1.tgz",
+      "hash": "sha512-TaFp4HJl7XoiqfoXAe6wlbiMkOCRjduz7Wvr9SszNJeXAQNncDhGiNPriS+xE9cWBi+SsX3fGlk/x8Bbr3NwNA=="
+    },
+    "0.71.1": {
+      "drv_name": "three-0.71.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.71.1.tgz",
+      "hash": "sha512-HbwWbh8WCptfFmOCrI5V1C96H6xNaQxtWQ1PkPNIPzt5S2gbBbEDnimFlN84UaGpKcCHqWKYWJNdnjn+74FODQ=="
+    },
+    "0.72.0": {
+      "drv_name": "three-0.72.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.72.0.tgz",
+      "hash": "sha512-raTakv7kEae66TY1QqFYhWU9AWmYJa0Bcnr3pmhn9qsSCyfp5olgTW1loFbkRpwYn1l0Cf/4q6Sv9bbCkSJAZQ=="
+    },
+    "0.73.2": {
+      "drv_name": "three-0.73.2",
+      "url": "https://registry.npmjs.org/three/-/three-0.73.2.tgz",
+      "hash": "sha512-TC2H54TAnLwLwuMz5mUNN60BuK5MvLI1OgF2X1PdxnVehgZ7p9sNbaHpJEj3hi2T8WadlIUE8d/96oe3XlpPAw=="
+    },
+    "0.74.0": {
+      "drv_name": "three-0.74.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.74.0.tgz",
+      "hash": "sha512-PEQkTb0pCNp2yuhWMD8N5kSEARFOxym35CatJyOtsI7/+ZO0VNBFIfecjw2YbO6k818krcOvic5BKzFQ1jPwcQ=="
+    },
+    "0.75.0": {
+      "drv_name": "three-0.75.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.75.0.tgz",
+      "hash": "sha512-yEWXLFuu5ea/+LuHOgnAWm985AZj2VHAV/ELkDN2i36OuRP+SSjqAWUo8ezaf1tS+EMMIKmevpedCbCQEapnPA=="
+    },
+    "0.76.1": {
+      "drv_name": "three-0.76.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.76.1.tgz",
+      "hash": "sha512-yPvjlLxsXg2TiV5lukOlMVUEA5WF7DLRn9aJ0y1Xf2ZDyLIz8iynSG+AC9iSbcSFa/HbQdxboRplmZXhXcWLTg=="
+    },
+    "0.77.1": {
+      "drv_name": "three-0.77.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.77.1.tgz",
+      "hash": "sha512-TbPodomKQZuqEXQo9cbEciTP57t0pJkN+5LX2ESLq/eZ5b3iJrzTKx9Tcc5WvJTyYNf0GAcJNHsVy72Qt+Qd7g=="
+    },
+    "0.78.0": {
+      "drv_name": "three-0.78.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.78.0.tgz",
+      "hash": "sha512-JIu4XJrBiwN68qb9Vz/0vF1MjhXM5WueBWpRid+wI2gAKlmnseKCNI3srWbBCV7te1bk9X+sw4ASMSMl5Ng98w=="
+    },
+    "0.79.0": {
+      "drv_name": "three-0.79.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.79.0.tgz",
+      "hash": "sha512-tPdnlL8ZFI5d9Ef27VzIQHi343PTGIwXqkzd9Ouf3zInAWNWqBSd+dKqlH6c+N+XfIEGNQ4TXXt+uzUjxg6Z7w=="
+    },
+    "0.80.1": {
+      "drv_name": "three-0.80.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.80.1.tgz",
+      "hash": "sha512-jNqrn/j2PNAs49+oWiJks6mz16x07eUr27k1RSfYwHQ/vs4kazCGVXA8ZGLCkBBfmDig6awZFffjj7YX/BBj9w=="
+    },
+    "0.81.2": {
+      "drv_name": "three-0.81.2",
+      "url": "https://registry.npmjs.org/three/-/three-0.81.2.tgz",
+      "hash": "sha512-GhHNI2SWV1+0ZPP/EgVbN1wDMQ0slCiDHd/ye/sGx2KomhgNY+Iozg2GfgkmGlL1f9xD78TTW8HGFn9bnEdWbg=="
+    },
+    "0.82.1": {
+      "drv_name": "three-0.82.1",
+      "url": "https://registry.npmjs.org/three/-/three-0.82.1.tgz",
+      "hash": "sha512-90A+47HKf6HhDzWwn2urTi/4rs+lppVCj5BR6YeTbyNnjDX3OrtR0g1aDorh/LW7HwRCUSh2UHTBFEAlH05XmA=="
+    },
+    "0.83.0": {
+      "drv_name": "three-0.83.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.83.0.tgz",
+      "hash": "sha512-x9TqsmvhHG/Lw16Zi9zbJ0ho+kP8SgIfsz8dJYZbeWaFWoVwdXKolQQAftkUlpuKDys1+6SZIBHoA2QdoZKByQ=="
+    },
+    "0.84.0": {
+      "drv_name": "three-0.84.0",
+      "url": "https://registry.npmjs.org/three/-/three-0.84.0.tgz",
+      "hash": "sha512-B4xnfPcKfUS6Z2tChQZ9+5saYWoC8XoTSYZ0MRNPzXG6wLqEE1FZauNnFEaLGuiBXzxrD9cqDZ3GTk0XmV5fXw=="
+    }
+  }
+}
