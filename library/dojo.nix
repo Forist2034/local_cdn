@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   versions =
-    builtins.fromJSON (builtins.readFile ../../data/library/dojo/package.json);
+    builtins.fromJSON (builtins.readFile ../data/library/dojo/package.json);
 in {
   inherit versions;
   packages = builtins.mapAttrs (version: info:

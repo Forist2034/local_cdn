@@ -35,7 +35,7 @@ in {
             in "ln -sv ${package}/${subdir} $out/${v.version}"
           else
             "") vs));
-      npmVersions = loadFile ../../data/website/ajax.googleapis.com/npm.json;
+      npmVersions = loadFile ../data/website/ajax.googleapis.com/npm.json;
     in {
       addSSL = true;
       sslCertificate = cfg.cert.certificate;
@@ -48,9 +48,9 @@ in {
         mkLinkedNpmLoc = p: vs: mkLocation (linkNpmVersions p vs);
       in {
         "/ajax/libs/cesiumjs/1.78/" = mkLocation ((source.npm.fetchNpm
-          (loadFile ../../data/source/npm/cesium.json).versions."1.78.0"));
+          (loadFile ../data/source/npm/cesium.json).versions."1.78.0"));
         "/ajax/libs/d3js/" =
-          mkLinkedNpmLoc ../../data/source/npm/d3.json npmVersions.d3;
+          mkLinkedNpmLoc ../data/source/npm/d3.json npmVersions.d3;
         "/ajax/libs/dojo/" = mkLocation
           (pkgs.runCommand "ajax-googleapis-dojo" { } (''
             mkdir $out
@@ -58,13 +58,11 @@ in {
             if builtins.hasAttr v library.dojo.packages then
               "ln -sv ${library.dojo.packages.${v}} $out/${v}"
             else
-              "")
-            (loadFile ../../data/website/ajax.googleapis.com/dojo.json))));
+              "") (loadFile ../data/website/ajax.googleapis.com/dojo.json))));
         "/ajax/libs/hammerjs/" =
-          mkLinkedNpmLoc ../../data/source/npm/hammerjs.json
-          npmVersions.hammerjs;
+          mkLinkedNpmLoc ../data/source/npm/hammerjs.json npmVersions.hammerjs;
         "/ajax/libs/indefinite-observable/" =
-          mkLinkedNpmLoc ../../data/source/npm/indefinite-observable.json
+          mkLinkedNpmLoc ../data/source/npm/indefinite-observable.json
           npmVersions.indefinite-observable;
         "/ajax/libs/jquery/" = let jquery = library.jquery.core;
         in mkLocation (pkgs.runCommand "ajax-googleapis-jquery" { } (''
@@ -77,25 +75,24 @@ in {
               "ln -sv ${file.package} $out/${v}/jquery.${file.extension}"))
               (builtins.attrValues jquery.packages.${v}))
           else
-            "")
-          (loadFile ../../data/website/ajax.googleapis.com/jquery.json))));
+            "") (loadFile ../data/website/ajax.googleapis.com/jquery.json))));
         #"/ajax/libs/jqueryui/" = ;
         #"/ajax/libs/jquerymobile/" = "";
-        "/ajax/libs/listjs/" = mkLinkedNpmLoc ../../data/source/npm/list.js.json
-          npmVersions."list.js";
+        "/ajax/libs/listjs/" =
+          mkLinkedNpmLoc ../data/source/npm/list.js.json npmVersions."list.js";
         "/ajax/libs/material-motion/" =
-          mkLinkedNpmLoc ../../data/source/npm/material-motion.json
+          mkLinkedNpmLoc ../data/source/npm/material-motion.json
           npmVersions.material-motion;
         "/ajax/libs/model-viewer/" =
-          mkLinkedNpmLoc (../../data/source/npm + "/@google/model-viewer.json")
+          mkLinkedNpmLoc (../data/source/npm + "/@google/model-viewer.json")
           npmVersions."@google/model-viewer";
         "/ajax/libs/shaka-player/" =
-          mkLinkedNpmLoc ../../data/source/npm/shaka-player.json
+          mkLinkedNpmLoc ../data/source/npm/shaka-player.json
           npmVersions.shaka-player;
         "/ajax/libs/spf/" =
-          mkLinkedNpmLoc ../../data/source/npm/spf.json npmVersions.spf;
+          mkLinkedNpmLoc ../data/source/npm/spf.json npmVersions.spf;
         "/ajax/libs/threejs/" = let
-          npm = loadFile ../../data/source/npm/three.json;
+          npm = loadFile ../data/source/npm/three.json;
           version_map = library.three.version_map;
         in mkLocation (pkgs.runCommand "ajax-googleapis-three" { } (''
           mkdir $out
@@ -107,9 +104,9 @@ in {
               dir = if v.dir == null then "" else v.dir;
             in "ln -sv ${package}/${dir} $out/${v.version}"
           else
-            "") (loadFile ../../data/website/ajax.googleapis.com/three.json))));
+            "") (loadFile ../data/website/ajax.googleapis.com/three.json))));
         "/ajax/libs/webfont/" =
-          mkLinkedNpmLoc ../../data/source/npm/webfontloader.json
+          mkLinkedNpmLoc ../data/source/npm/webfontloader.json
           npmVersions.webfontloader;
       };
     };

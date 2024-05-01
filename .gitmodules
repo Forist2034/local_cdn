@@ -1,0 +1,3 @@
+[submodule "data"]
+	path = data
+	url = https://github.com/Forist2034/local_cdn-data.git

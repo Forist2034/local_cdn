@@ -2,7 +2,7 @@
 let loadFile = p: builtins.fromJSON (builtins.readFile p);
 in {
   core = let
-    versions = loadFile ../../data/library/jquery/core.json;
+    versions = loadFile ../data/library/jquery/core.json;
     extension = {
       original = "js";
       min = "min.js";

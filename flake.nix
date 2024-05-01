@@ -15,19 +15,19 @@
           let
             local_cdn_lib = {
               cert = certgen.lib lib;
-              source = { npm = (import ./source/npm) args; };
+              source = { npm = (import ./source/npm.nix) args; };
               library = {
-                dojo = (import ./library/dojo) args;
-                jquery = (import ./library/jquery) args;
-                three = import ./library/three.js;
+                dojo = (import ./library/dojo.nix) args;
+                jquery = (import ./library/jquery.nix) args;
+                three = import ./library/three.nix;
               };
             };
             importWithLib = p: (import p) local_cdn_lib;
           in {
             imports = [
               certgen.module
-              (importWithLib ./website/status)
-              (importWithLib ./website/ajax.googleapis.com)
+              (importWithLib ./website/status.nix)
+              (importWithLib ./website/ajax.googleapis.com.nix)
             ];
           };
       };
