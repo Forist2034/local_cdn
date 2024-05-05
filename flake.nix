@@ -32,6 +32,7 @@
               certgen.module
               (importWithLib ./website/status.nix)
               (importWithLib ./website/ajax.googleapis.com.nix)
+              (importWithLib ./website/google.nix)
             ];
           };
         local_cdn-dns = dns.module;
