@@ -1,6 +1,6 @@
-use std::{collections::HashMap, path::PathBuf, sync::Arc};
+use std::{collections::HashMap, path::PathBuf, sync::Arc, time::Duration};
 
-use hickory_resolver::name_server::ConnectionProvider;
+use hickory_resolver::name_server::{ConnectionProvider, TokioConnectionProvider};
 use hickory_server::server::{RequestHandler, ResponseInfo};
 use serde::Deserialize;
 
@@ -18,10 +18,56 @@ pub use local_srv::UnixService;
 
 pub mod domain;
 pub use domain::DomainAction;
+use tokio::{sync::RwLock, time::timeout};
 
 pub struct Upstream<R: ConnectionProvider> {
     pub name: String,
-    pub resolver: hickory_resolver::AsyncResolver<R>,
+    pub config: hickory_resolver::config::ResolverConfig,
+    pub options: hickory_resolver::config::ResolverOpts,
+    timeout: Duration,
+    resolver: RwLock<hickory_resolver::AsyncResolver<R>>,
+}
+impl Upstream<hickory_resolver::name_server::TokioConnectionProvider> {
+    pub fn new(
+        name: String,
+        config: hickory_resolver::config::ResolverConfig,
+        options: hickory_resolver::config::ResolverOpts,
+    ) -> Self {
+        Self {
+            name,
+            config: config.clone(),
+            options: options.clone(),
+            timeout: options.timeout,
+            resolver: RwLock::new(hickory_resolver::AsyncResolver::tokio(config, options)),
+        }
+    }
+    // workaround for https://github.com/hickory-dns/hickory-dns/issues/2050
+    pub async fn lookup<N: hickory_resolver::IntoName>(
+        &self,
+        name: N,
+        record_type: hickory_proto::rr::RecordType,
+    ) -> Result<hickory_resolver::lookup::Lookup, hickory_resolver::error::ResolveError> {
+        let ret = timeout(
+            self.timeout,
+            self.resolver.read().await.lookup(name, record_type),
+        )
+        .await;
+
+        match ret {
+            Ok(v) => v,
+            Err(e) => {
+                tracing::error!(
+                    "dns resolver timeout after {} seconds: {e:?}",
+                    self.timeout.as_secs()
+                );
+                *self.resolver.write().await = hickory_resolver::AsyncResolver::tokio(
+                    self.config.clone(),
+                    self.options.clone(),
+                );
+                Err(hickory_resolver::error::ResolveErrorKind::Timeout.into())
+            }
+        }
+    }
 }
 
 pub trait FromConfig<P: ConnectionProvider>: Sized {
@@ -92,7 +138,7 @@ impl<P: ConnectionProvider> FromConfig<P> for Action<P> {
     }
 }
 
-impl<P: ConnectionProvider> RequestHandler for Action<P> {
+impl RequestHandler for Action<TokioConnectionProvider> {
     fn handle_request<'life0, 'life1, 'async_trait, R>(
         &'life0 self,
         request: &'life1 hickory_server::server::Request,

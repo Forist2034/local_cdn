@@ -90,13 +90,11 @@ fn start_server(config: local_cdn_dns::config::Config) -> Result<(), Error> {
             .map(|(name, cfg)| {
                 (
                     name,
-                    Arc::new(local_cdn_dns::action::Upstream {
-                        name: name.to_owned(),
-                        resolver: hickory_resolver::TokioAsyncResolver::tokio(
-                            cfg.config.into(),
-                            cfg.options,
-                        ),
-                    }),
+                    Arc::new(local_cdn_dns::action::Upstream::new(
+                        name.to_owned(),
+                        cfg.config.into(),
+                        cfg.options,
+                    )),
                 )
             })
             .collect()

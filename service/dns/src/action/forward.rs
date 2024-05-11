@@ -8,7 +8,10 @@ use hickory_proto::{
     op::{Header, ResponseCode},
     rr::{rdata, RData, Record},
 };
-use hickory_resolver::{error::ResolveErrorKind, name_server::ConnectionProvider};
+use hickory_resolver::{
+    error::ResolveErrorKind,
+    name_server::{ConnectionProvider, TokioConnectionProvider},
+};
 use hickory_server::{
     authority::MessageResponseBuilder,
     server::{Request, RequestHandler},
@@ -56,7 +59,7 @@ impl<P: ConnectionProvider> FromConfig<P> for Forward<P> {
     }
 }
 
-impl<P: ConnectionProvider> RequestHandler for Forward<P> {
+impl RequestHandler for Forward<TokioConnectionProvider> {
     fn handle_request<'life0, 'life1, 'async_trait, R>(
         &'life0 self,
         request: &'life1 Request,
@@ -79,7 +82,6 @@ impl<P: ConnectionProvider> RequestHandler for Forward<P> {
             let mut code = None;
             for r in self.resolvers.iter() {
                 match r
-                    .resolver
                     .lookup(q.name(), q.query_type())
                     .instrument(tracing::info_span!("resolver_lookup", upstream = r.name))
                     .await
