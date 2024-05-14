@@ -54,6 +54,11 @@ in {
         enable = mkEnableOption "local_cdn cert";
         user = mkOption { type = types.str; };
         group = mkOption { type = types.str; };
+        overwrite = mkOption {
+          type = types.enum [ "always" "expired" "never" ];
+          default = "expired";
+          description = "Overwrite policy";
+        };
         config = let
           cert_config = {
             distinguished_name = mkOption {
@@ -129,8 +134,10 @@ in {
     in lib.mkIf cfg.enable {
       systemd.services."local_cdn-certgen" = let
         bin_drv = pkgs.callPackage package { };
-        config_file =
-          pkgs.writeText "certgen.json" (builtins.toJSON cfg.config);
+        config_file = pkgs.writeText "certgen.json" (builtins.toJSON {
+          inherit (cfg) overwrite;
+          cert = cfg.config;
+        });
       in {
         description = "Server certificate generator for local cdn";
         serviceConfig = {
@@ -138,9 +145,9 @@ in {
           User = cfg.user;
           Group = cfg.group;
           StateDirectory = "local_cdn/certgen";
+          ExecStart =
+            "${bin_drv}/bin/local_cdn-certgen ${config_file} \${STATE_DIRECTORY}/ca \${STATE_DIRECTORY}/servers \${STATE_DIRECTORY}/state.json";
         };
-        script =
-          "${bin_drv}/bin/local_cdn-certgen ${config_file} $STATE_DIRECTORY/ca $STATE_DIRECTORY/servers";
       };
     };
   };

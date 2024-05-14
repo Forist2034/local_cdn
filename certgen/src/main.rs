@@ -2,13 +2,16 @@ use std::{
     borrow::Cow,
     env, error,
     fmt::Display,
-    fs::{self, Permissions},
+    fs,
     io::{self, Write},
-    os::unix::fs::PermissionsExt,
+    ops::Add,
+    os::unix::fs::OpenOptionsExt,
     path::{Path, PathBuf},
+    time::{Duration, SystemTime},
 };
 
 use local_cdn_certgen::generate;
+use serde::{Deserialize, Serialize};
 use zeroize::Zeroize;
 
 #[derive(Debug)]
@@ -55,19 +58,68 @@ impl<T, E: error::Error + 'static> ResultExt<T, E> for Result<T, E> {
     }
 }
 
+#[derive(Serialize, Deserialize)]
+struct State {
+    expire: SystemTime,
+    #[serde(with = "const_hex::serde")]
+    config_sha256: [u8; 32],
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum Overwrite {
+    Always,
+    Expired,
+    Never,
+}
+#[derive(Deserialize)]
+struct Config {
+    overwrite: Overwrite,
+    cert: local_cdn_certgen::Config,
+}
+
 fn write_with_perm(
     path: impl AsRef<Path>,
     content: impl AsRef<[u8]>,
-    perm: Permissions,
+    mode: u32,
 ) -> Result<(), io::Error> {
-    let mut f = fs::File::create(path)?;
+    let mut f = fs::File::options()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .mode(mode)
+        .open(path)?;
     f.write_all(content.as_ref())?;
-    f.set_permissions(perm)?;
     Ok(())
 }
 
+fn overwrite(
+    state_path: &Path,
+    ca_path: &Path,
+    config: &Config,
+    time: SystemTime,
+    config_sha256: &[u8; 32],
+) -> Result<bool, Error> {
+    let old_state = if state_path.exists() {
+        serde_json::from_slice::<State>(
+            &fs::read(&state_path).context("failed to read state file")?,
+        )
+        .context("failed to parse state file")?
+    } else {
+        return Ok(true);
+    };
+    if &old_state.config_sha256 != config_sha256 || !ca_path.exists() {
+        return Ok(true);
+    }
+    Ok(match config.overwrite {
+        Overwrite::Always => true,
+        Overwrite::Expired => old_state.expire <= time,
+        Overwrite::Never => false,
+    })
+}
+
 fn main() -> Result<(), Error> {
-    let (config_path, ca_path, servers_path) = {
+    let (config_path, ca_path, servers_path, state_path) = {
         let mut args = env::args_os().fuse();
         args.next().ok_or_else(|| Error {
             message: Cow::Borrowed("missing program name"),
@@ -86,43 +138,61 @@ fn main() -> Result<(), Error> {
                 message: Cow::Borrowed("missing server path"),
                 inner: None,
             })?,
+            PathBuf::from(args.next().ok_or_else(|| Error {
+                message: Cow::Borrowed("missing state path"),
+                inner: None,
+            })?),
         )
     };
-    let config =
-        serde_json::from_slice(&fs::read(config_path).context("failed to read config file")?)
-            .context("failed to parse config file")?;
+    let config_data = fs::read(config_path).context("failed to read config file")?;
+    let config: Config =
+        serde_json::from_slice(&config_data).context("failed to parse config file")?;
+    let config_sha256 = {
+        use sha2::Digest;
+        sha2::Sha256::digest(&config_data).into()
+    };
 
-    let (mut ca, servers) = generate(config, time::OffsetDateTime::now_utc())
+    let ca_path = {
+        let mut p = PathBuf::from(ca_path);
+        if !p.exists() {
+            fs::create_dir(&p).context("failed to create ca directory")?;
+        }
+        p.push(format!("{}.pem", config.cert.ca_name));
+        p
+    };
+
+    let time = SystemTime::now();
+
+    if !overwrite(&state_path, &ca_path, &config, time, &config_sha256)? {
+        println!("skipped generate new certificate");
+        return Ok(());
+    }
+    let state = State {
+        expire: time.add(Duration::from_secs(config.cert.expire_secs.get() as u64)),
+        config_sha256,
+    };
+
+    let (mut ca, servers) = generate(config.cert, time::OffsetDateTime::from(time))
         .context("failed to generate certificate")?;
 
-    fs::write(
-        {
-            let mut p = PathBuf::from(ca_path);
-            fs::create_dir_all(&p).context("failed to create ca directory")?;
-            p.push(format!("{}.pem", ca.name));
-            p
-        },
-        ca.certified_key.cert.pem(),
-    )
-    .context("failed to write ca cert")?;
+    fs::write(ca_path, ca.certified_key.cert.pem()).context("failed to write ca cert")?;
     ca.certified_key.key_pair.zeroize();
 
     let servers_path = PathBuf::from(servers_path);
     fs::create_dir_all(&servers_path).context("failed to create servers directory")?;
     for (idx, mut s) in servers.into_iter().enumerate() {
         let mut p = servers_path.join(format!("{}.key", s.name));
-        write_with_perm(
-            &p,
-            s.certified_key.key_pair.serialize_pem(),
-            Permissions::from_mode(0o600),
-        )
-        .with_context(|| format!("failed to write server {} key", idx))?;
+        write_with_perm(&p, s.certified_key.key_pair.serialize_pem(), 0o600)
+            .with_context(|| format!("failed to write server {} key", idx))?;
         s.certified_key.key_pair.zeroize();
 
         p.set_extension("pem");
         fs::write(&p, s.certified_key.cert.pem())
             .with_context(|| format!("failed to write server {} cert", idx))?;
     }
+
+    fs::write(&state_path, serde_json::to_vec(&state).unwrap())
+        .context("failed to write state file")?;
 
     Ok(())
 }
