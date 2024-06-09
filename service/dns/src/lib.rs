@@ -53,10 +53,32 @@ pub mod config {
 
     #[derive(Deserialize)]
     #[serde(bound = "'de:'a")]
-    pub struct Config<'a> {
-        pub upstream: HashMap<&'a str, Upstream>,
-        pub actions: crate::action::domain::Config<crate::action::ActionCfg<'a>>,
+    pub struct Server<'a> {
+        pub action: crate::action::domain::Config<crate::action::ActionCfg<'a>>,
         pub listen: Vec<Listen>,
+    }
+
+    #[derive(Default, Deserialize)]
+    #[serde(rename_all = "lowercase")]
+    pub enum LogLevel {
+        Off,
+        Error,
+        Warn,
+        #[default]
+        Info,
+        Debug,
+        Trace,
+    }
+
+    #[derive(Deserialize)]
+    #[serde(bound = "'de:'a")]
+    pub struct Config<'a> {
+        #[serde(default)]
+        pub log_level: LogLevel,
+        #[serde(default)]
+        pub json_log: Option<&'a str>,
+        pub upstream: HashMap<&'a str, Upstream>,
+        pub servers: HashMap<&'a str, Server<'a>>,
     }
 }
 
