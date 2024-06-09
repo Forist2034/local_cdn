@@ -5,13 +5,14 @@
     let
       certgen = import ./certgen.nix;
       dns = import ./service/dns.nix;
+      cache-proxy = import ./service/cache-proxy.nix;
     in {
       packages = {
-        x86_64-linux = {
-          local_cdn-certgen =
-            nixpkgs.legacyPackages.x86_64-linux.callPackage certgen.package { };
-          local_cdn-dns =
-            nixpkgs.legacyPackages.x86_64-linux.callPackage dns.package { };
+        x86_64-linux = let pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        in {
+          local_cdn-certgen = pkgs.callPackage certgen.package { };
+          local_cdn-dns = pkgs.callPackage dns.package { };
+          local_cdn-proxy = pkgs.callPackage cache-proxy.package { };
         };
       };
       nixosModules = {
@@ -30,6 +31,7 @@
           in {
             imports = [
               certgen.module
+              (cache-proxy.module { cert = certgen.lib lib; })
               (importWithLib ./website/status.nix)
               (importWithLib ./website/ajax.googleapis.com.nix)
               (importWithLib ./website/google.nix)
