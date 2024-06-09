@@ -3,7 +3,7 @@
 
   outputs = { nixpkgs, ... }:
     let
-      certgen = import ./certgen;
+      certgen = import ./certgen.nix;
       dns = import ./service/dns.nix;
     in {
       packages = {

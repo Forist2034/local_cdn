@@ -5,21 +5,22 @@ in {
   options = with lib; {
     local_cdn.googleapis.ajax = {
       enable = mkEnableOption "ajax.googleapis.com local cdn";
-      cert = cert.mkOption cert_name;
+      cert = cert.mkOption { default_ca = "static"; };
     };
   };
 
   config = let cfg = config.local_cdn.googleapis.ajax;
-  in lib.mkIf cfg.enable {
-    local_cdn.certgen.config.servers = lib.mkIf cfg.cert.certgen.enable {
-      ${cert_name} = {
-        distinguished_name = {
-          organization_unit_name = "ajax.googleapis.com local cdn";
-          common_name = "ajax.googleapis.com";
-        };
-        subject_alt_names = { dns = [ "ajax.googleapis.com" ]; };
+  in lib.mkIf cfg.enable (let
+    cert_config = cert.mkConfig {
+      name = cert_name;
+      distinguished_name = {
+        organization_unit_name = "ajax.googleapis.com local cdn";
+        common_name = "ajax.googleapis.com";
       };
-    };
+      subject_alt_names = { dns = [ "ajax.googleapis.com" ]; };
+    } cfg.cert;
+  in {
+    local_cdn.certgen.configs = cert_config.certgen;
 
     services.nginx.virtualHosts."ajax.googleapis.com" = let
       loadFile = p: builtins.fromJSON (builtins.readFile p);
@@ -38,8 +39,8 @@ in {
       npmVersions = loadFile ../data/website/ajax.googleapis.com/npm.json;
     in {
       addSSL = true;
-      sslCertificate = cfg.cert.certificate;
-      sslCertificateKey = cfg.cert.key;
+      sslCertificate = cert_config.certificate;
+      sslCertificateKey = cert_config.key;
       locations = let
         mkLocation = p: {
           alias = p + "/";
@@ -110,10 +111,5 @@ in {
           npmVersions.webfontloader;
       };
     };
-
-    systemd.services.nginx = lib.mkIf cfg.cert.certgen.enable {
-      wants = [ cert.certgen.service ];
-      after = [ cert.certgen.service ];
-    };
-  };
+  });
 }
