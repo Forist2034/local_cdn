@@ -111,7 +111,7 @@ impl<F, E> ProxyFuture<F, E> {
     fn cached(mut pts: http::response::Parts, body: Bytes) -> Self {
         pts.headers.insert(
             header::CACHE_CONTROL,
-            header::HeaderValue::from_static("no-cache"),
+            header::HeaderValue::from_static("no-store"),
         );
         Self::Ready(Some(Ok(Response::from_parts(
             pts,
