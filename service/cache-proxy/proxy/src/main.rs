@@ -199,6 +199,7 @@ fn main() -> ExitCode {
                     .from_env()
                     .unwrap()
             }
+            #[cfg(not(feature = "local"))]
             {
                 use tracing_subscriber::filter::LevelFilter;
                 match std::env::var("RUST_LOG") {

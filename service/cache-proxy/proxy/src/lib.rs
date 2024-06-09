@@ -16,7 +16,7 @@ use hyper::body::{Bytes, Incoming};
 use tower_http::{
     classify::MakeClassifier,
     decompression::Decompression,
-    trace::{HttpMakeClassifier, MakeSpan, Trace},
+    trace::{HttpMakeClassifier, MakeSpan, OnRequest, OnResponse, Trace},
 };
 use tower_layer::Layer;
 use tower_service::Service;
@@ -153,13 +153,32 @@ pub type CachedResponse = Response<CachedBody>;
 struct ForwardMkSpan;
 impl<B> MakeSpan<B> for ForwardMkSpan {
     fn make_span(&mut self, request: &Request<B>) -> tracing::Span {
-        tracing::info_span!(
-            "forwarding",
-            method = %request.method(),
-            uri = %request.uri(),
-            version = ?request.version(),
-            header = ?request.headers()
-        )
+        tracing::info_span!("forwarding", method = %request.method(), uri = %request.uri(),)
+    }
+}
+
+#[derive(Clone, Copy)]
+struct ForwardOnRequest;
+impl<B> OnRequest<B> for ForwardOnRequest {
+    fn on_request(&mut self, request: &Request<B>, _: &tracing::Span) {
+        tracing::info!("start request");
+        tracing::debug!(headers = ?request.headers(), "request headers");
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct ForwardOnResponse {}
+impl<B> OnResponse<B> for ForwardOnResponse {
+    fn on_response(
+        self,
+        response: &Response<B>,
+        latency: std::time::Duration,
+        span: &tracing::Span,
+    ) {
+        tower_http::trace::DefaultOnResponse::new()
+            .level(tracing::Level::INFO)
+            .include_headers(tracing::enabled!(tracing::Level::DEBUG))
+            .on_response(response, latency, span)
     }
 }
 
@@ -170,8 +189,7 @@ impl<B> MakeSpan<B> for UpstreamMkSpan {
         tracing::info_span!(
             "upstream",
             uri = %request.uri(),
-            version = ?request.version(),
-            header = ?request.headers()
+            headers = ?request.headers()
         )
     }
 }
@@ -180,7 +198,7 @@ impl<B> MakeSpan<B> for UpstreamMkSpan {
 pub struct CacheProxy<S> {
     root: Arc<Path>,
     authority: Arc<Authority>,
-    forwarded: Trace<S, HttpMakeClassifier, ForwardMkSpan>,
+    forwarded: Trace<S, HttpMakeClassifier, ForwardMkSpan, ForwardOnRequest, ForwardOnResponse>,
     upstream: Decompression<Trace<S, HttpMakeClassifier, UpstreamMkSpan>>,
 }
 
@@ -189,8 +207,10 @@ type IncomingResp = Response<Incoming>;
 
 type ForwardedBody = tower_http::trace::ResponseBody<Incoming, ClassifyEos>;
 type ForwardFn<E> = fn(Result<Response<ForwardedBody>, E>) -> Result<CachedResponse, ProxyError<E>>;
-type ForwardFuture<F, E> =
-    futures_util::future::Map<tower_http::trace::ResponseFuture<F, Classifier>, ForwardFn<E>>;
+type ForwardFuture<F, E> = futures_util::future::Map<
+    tower_http::trace::ResponseFuture<F, Classifier, ForwardOnResponse>,
+    ForwardFn<E>,
+>;
 
 impl<S: Clone> CacheProxy<S> {
     fn with_path(root: Arc<Path>, authority: Arc<Authority>, upstream: S) -> Self {
@@ -199,10 +219,8 @@ impl<S: Clone> CacheProxy<S> {
             authority,
             forwarded: Trace::new_for_http(upstream.clone())
                 .make_span_with(ForwardMkSpan)
-                .on_request(tower_http::trace::DefaultOnRequest::new().level(tracing::Level::INFO))
-                .on_response(
-                    tower_http::trace::DefaultOnResponse::new().level(tracing::Level::INFO),
-                ),
+                .on_request(ForwardOnRequest)
+                .on_response(ForwardOnResponse {}),
             upstream: Decompression::new(
                 Trace::new_for_http(upstream)
                     .make_span_with(UpstreamMkSpan)
