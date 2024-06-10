@@ -392,7 +392,7 @@ where
 }
 
 fn cache_key(req: &http::request::Parts) -> &str {
-    req.uri.path_and_query().map_or("", |q| q.path())
+    req.uri.path_and_query().map_or("", |p| p.as_str())
 }
 
 pub struct CacheLayer(Arc<Path>, Arc<Authority>);
