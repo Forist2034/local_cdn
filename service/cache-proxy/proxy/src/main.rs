@@ -96,7 +96,8 @@ fn run(root: PathBuf, server: String, listen: Listen) -> anyhow::Result<()> {
     let client = hyper_util::client::legacy::Builder::new(hyper_util::rt::TokioExecutor::new())
         .build::<_, local_cdn_proxy::UpstreamBody>(local_cdn_proxy::connector::Connector(
         hyper_rustls::HttpsConnectorBuilder::new()
-            .with_webpki_roots()
+            .with_native_roots()
+            .context("failed to get certificate roots")?
             .https_only()
             .with_server_name_resolver(hyper_rustls::FixedServerNameResolver::new(
                 server.try_into().context("invalid server name")?,

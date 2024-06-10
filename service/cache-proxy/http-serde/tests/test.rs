@@ -1,21 +1,32 @@
+fn cbor_to_vec<S: serde::Serialize>(data: &S) -> Vec<u8> {
+    let mut ret = Vec::new();
+    ciborium::into_writer(data, &mut ret).unwrap();
+    ret
+}
+
 #[test]
 fn roundtrip_binary() {
     #[derive(serde::Serialize, serde::Deserialize)]
-    struct Wrap(
-        #[serde(with = "http_serde::header_map")] HeaderMap,
-    );
+    struct Wrap(#[serde(with = "http_serde::header_map")] HeaderMap);
 
     use http::{HeaderMap, HeaderValue};
     let mut map = HeaderMap::new();
-    map.insert("binary", HeaderValue::from_bytes(&[254,255]).unwrap());
-    map.append("multi-value", HeaderValue::from_bytes(&[128,129,130,131]).unwrap());
-    map.append("multi-value", HeaderValue::from_bytes(&[33,34,35]).unwrap());
+    map.insert("binary", HeaderValue::from_bytes(&[254, 255]).unwrap());
+    map.append(
+        "multi-value",
+        HeaderValue::from_bytes(&[128, 129, 130, 131]).unwrap(),
+    );
+    map.append(
+        "multi-value",
+        HeaderValue::from_bytes(&[33, 34, 35]).unwrap(),
+    );
     let wrapped = Wrap(map);
 
-    let back_cbor: Wrap = serde_cbor::from_slice(&serde_cbor::to_vec(&wrapped).unwrap()).unwrap();
+    let back_cbor: Wrap = ciborium::from_reader(cbor_to_vec(&wrapped).as_slice()).unwrap();
     let back_bin: Wrap = bincode::deserialize(&bincode::serialize(&wrapped).unwrap()).unwrap();
     let back_rmp: Wrap = rmp_serde::from_slice(&rmp_serde::to_vec(&wrapped).unwrap()).unwrap();
-    let back_rmp_named: Wrap = rmp_serde::from_slice(&rmp_serde::to_vec_named(&wrapped).unwrap()).unwrap();
+    let back_rmp_named: Wrap =
+        rmp_serde::from_slice(&rmp_serde::to_vec_named(&wrapped).unwrap()).unwrap();
 
     assert_eq!(back_cbor.0, wrapped.0);
     assert_eq!(back_bin.0, wrapped.0);
@@ -55,7 +66,7 @@ fn roundtrip() {
     );
     let json = serde_json::to_string(&wrapped).unwrap();
     let yaml = serde_yaml::to_string(&wrapped).unwrap();
-    let cbor = serde_cbor::to_vec(&wrapped).unwrap();
+    let cbor = cbor_to_vec(&wrapped);
     let rmp = rmp_serde::to_vec(&wrapped).unwrap();
     let rmp_named = rmp_serde::to_vec_named(&wrapped).unwrap();
     let bin = bincode::serialize(&wrapped).unwrap();
@@ -71,7 +82,7 @@ fn roundtrip() {
     let back_js_reader: Wrap = serde_json::from_reader(io::Cursor::new(json.as_bytes())).unwrap();
     let back_yaml_str: Wrap = serde_yaml::from_str(&yaml).unwrap();
     let back_yaml_reader: Wrap = serde_yaml::from_reader(io::Cursor::new(yaml.as_bytes())).unwrap();
-    let back_cbor: Wrap = serde_cbor::from_slice(&cbor).unwrap();
+    let back_cbor: Wrap = ciborium::from_reader(cbor.as_slice()).unwrap();
     let back_bin: Wrap = bincode::deserialize(&bin).unwrap();
     let back_rmp: Wrap = rmp_serde::from_slice(&rmp).unwrap();
     let back_rmp_named: Wrap = rmp_serde::from_slice(&rmp_named).unwrap();
@@ -86,8 +97,14 @@ fn roundtrip() {
         back_rmp,
         back_rmp_named,
     ] {
-        assert_eq!(back.0.get("hey").map(http::HeaderValue::as_bytes).unwrap(), b"ho");
-        assert_eq!(back.0.get("foo").map(http::HeaderValue::as_bytes).unwrap(), b"bar");
+        assert_eq!(
+            back.0.get("hey").map(http::HeaderValue::as_bytes).unwrap(),
+            b"ho"
+        );
+        assert_eq!(
+            back.0.get("foo").map(http::HeaderValue::as_bytes).unwrap(),
+            b"bar"
+        );
         assert_eq!(
             back.0
                 .get_all("multi-value")
@@ -154,7 +171,7 @@ fn roundtrip_optional() {
 
     let json = serde_json::to_string(&wrapped).unwrap();
     let yaml = serde_yaml::to_string(&wrapped).unwrap();
-    let cbor = serde_cbor::to_vec(&wrapped).unwrap();
+    let cbor = cbor_to_vec(&wrapped);
     let rmp = rmp_serde::to_vec(&wrapped).unwrap();
     let rmp_named = rmp_serde::to_vec_named(&wrapped).unwrap();
     let bin = bincode::serialize(&wrapped).unwrap();
@@ -169,10 +186,12 @@ fn roundtrip_optional() {
     );
 
     let back_js_str: WrapOpt = serde_json::from_str(&json).unwrap();
-    let back_js_reader: WrapOpt = serde_json::from_reader(io::Cursor::new(json.as_bytes())).unwrap();
+    let back_js_reader: WrapOpt =
+        serde_json::from_reader(io::Cursor::new(json.as_bytes())).unwrap();
     let back_yaml_str: WrapOpt = serde_yaml::from_str(&yaml).unwrap();
-    let back_yaml_reader: WrapOpt = serde_yaml::from_reader(io::Cursor::new(yaml.as_bytes())).unwrap();
-    let back_cbor: WrapOpt = serde_cbor::from_slice(&cbor).unwrap();
+    let back_yaml_reader: WrapOpt =
+        serde_yaml::from_reader(io::Cursor::new(yaml.as_bytes())).unwrap();
+    let back_cbor: WrapOpt = ciborium::from_reader(cbor.as_slice()).unwrap();
     let back_bin: WrapOpt = bincode::deserialize(&bin).unwrap();
     let back_rmp: WrapOpt = rmp_serde::from_slice(&rmp).unwrap();
     let back_rmp_named: WrapOpt = rmp_serde::from_slice(&rmp_named).unwrap();
@@ -187,10 +206,28 @@ fn roundtrip_optional() {
         back_rmp,
         back_rmp_named,
     ] {
-        assert_eq!(back.header_map.as_ref().unwrap().get("hey").map(http::HeaderValue::as_bytes).unwrap(), b"ho");
-        assert_eq!(back.header_map.as_ref().unwrap().get("foo").map(http::HeaderValue::as_bytes).unwrap(), b"bar");
         assert_eq!(
-            back.header_map.as_ref().unwrap()
+            back.header_map
+                .as_ref()
+                .unwrap()
+                .get("hey")
+                .map(http::HeaderValue::as_bytes)
+                .unwrap(),
+            b"ho"
+        );
+        assert_eq!(
+            back.header_map
+                .as_ref()
+                .unwrap()
+                .get("foo")
+                .map(http::HeaderValue::as_bytes)
+                .unwrap(),
+            b"bar"
+        );
+        assert_eq!(
+            back.header_map
+                .as_ref()
+                .unwrap()
                 .get_all("multi-value")
                 .iter()
                 .map(|v| v.to_str().unwrap())
@@ -199,17 +236,22 @@ fn roundtrip_optional() {
             &["multi", "valued"][..]
         );
 
-        assert_eq!(&back.uri.as_ref().unwrap().to_string(), "http://example.com/");
+        assert_eq!(
+            &back.uri.as_ref().unwrap().to_string(),
+            "http://example.com/"
+        );
         assert_eq!(back.method.as_ref().unwrap(), Method::PUT);
         assert_eq!(back.status_code.unwrap(), StatusCode::NOT_MODIFIED);
-        assert_eq!(&back.authority.as_ref().unwrap().to_string(), "example.com:8080");
+        assert_eq!(
+            &back.authority.as_ref().unwrap().to_string(),
+            "example.com:8080"
+        );
         assert_eq!(format!("{:?}", back.version.as_ref().unwrap()), "HTTP/2.0");
     }
 
-
     let json_none = serde_json::to_string(&wrapped_none).unwrap();
     let yaml_none = serde_yaml::to_string(&wrapped_none).unwrap();
-    let cbor_none = serde_cbor::to_vec(&wrapped_none).unwrap();
+    let cbor_none = cbor_to_vec(&wrapped_none);
     let rmp_none = rmp_serde::to_vec(&wrapped_none).unwrap();
     let rmp_named_none = rmp_serde::to_vec_named(&wrapped_none).unwrap();
     let bin_none = bincode::serialize(&wrapped_none).unwrap();
@@ -220,10 +262,12 @@ fn roundtrip_optional() {
     );
 
     let back_js_str: WrapOpt = serde_json::from_str(&json_none).unwrap();
-    let back_js_reader: WrapOpt = serde_json::from_reader(io::Cursor::new(json_none.as_bytes())).unwrap();
+    let back_js_reader: WrapOpt =
+        serde_json::from_reader(io::Cursor::new(json_none.as_bytes())).unwrap();
     let back_yaml_str: WrapOpt = serde_yaml::from_str(&yaml_none).unwrap();
-    let back_yaml_reader: WrapOpt = serde_yaml::from_reader(io::Cursor::new(yaml_none.as_bytes())).unwrap();
-    let back_cbor: WrapOpt = serde_cbor::from_slice(&cbor_none).unwrap();
+    let back_yaml_reader: WrapOpt =
+        serde_yaml::from_reader(io::Cursor::new(yaml_none.as_bytes())).unwrap();
+    let back_cbor: WrapOpt = ciborium::from_reader(cbor_none.as_slice()).unwrap();
     let back_bin: WrapOpt = bincode::deserialize(&bin_none).unwrap();
     let back_rmp: WrapOpt = rmp_serde::from_slice(&rmp_none).unwrap();
     let back_rmp_named: WrapOpt = rmp_serde::from_slice(&rmp_named_none).unwrap();

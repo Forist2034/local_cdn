@@ -23,7 +23,7 @@ hyper-util = { version = "0.1.5", features = [
 ] }
 pin-project = "1.1.5"
 serde = { version = "1.0.203", features = ["derive"] }
-hyper-rustls = { version = "0.27.2", features = ["http2", "webpki-roots"] }
+hyper-rustls = { version = "0.27.2", features = ["http2", "native-tokio"] }
 tokio-rustls = { version = "0.26.0", default-features = false }
 tower = "0.4.13"
 tower-service = "0.3.2"

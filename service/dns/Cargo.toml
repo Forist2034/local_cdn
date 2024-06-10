@@ -11,7 +11,7 @@ hickory-resolver = { version = "0.24.1", default-features = false, features = [
   "tokio-runtime",
   "serde-config",
   "dns-over-https-rustls",
-  "webpki-roots",
+  "native-certs",
 ] }
 hickory-server = "0.24.1"
 radix_trie = "0.2.1"
