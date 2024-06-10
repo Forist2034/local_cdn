@@ -157,6 +157,35 @@ in {
             StateDirectory = "local_cdn/certgen/%i";
             ExecStart =
               "${bin_drv}/bin/local_cdn-certgen ${configFile} \${STATE_DIRECTORY}/ca \${STATE_DIRECTORY}/servers \${STATE_DIRECTORY}/state.json";
+
+            ProtectProc = "noaccess";
+            ProcSubset = "pid";
+
+            CapabilityBoundingSet = [ "" ];
+            NoNewPrivileges = true;
+
+            ProtectSystem = "strict";
+            ProtectHome = true;
+            PrivateTmp = true;
+            PrivateDevices = true;
+            PrivateNetwork = true;
+            PrivateIPC = true;
+            PrivateUsers = true;
+            ProtectHostname = true;
+            ProtectClock = true;
+            ProtectKernelTunables = true;
+            ProtectKernelModules = true;
+            ProtectKernelLogs = true;
+            ProtectControlGroups = true;
+            RestrictAddressFamilies = "none";
+            RestrictNamespaces = true;
+            LockPersonality = true;
+            MemoryDenyWriteExecute = true;
+            RestrictRealtime = true;
+            RestrictSUIDSGID = true;
+            RemoveIPC = true;
+
+            SystemCallArchitectures = "native";
           };
         };
       in builtins.listToAttrs (builtins.attrValues (builtins.mapAttrs

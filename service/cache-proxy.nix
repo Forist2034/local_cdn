@@ -56,7 +56,7 @@ in {
               User = cfg.user;
               Group = cfg.group;
 
-              CapabilityBoundingSet = [ ];
+              CapabilityBoundingSet = [ "" ];
               NoNewPrivileges = true;
 
               ProtectSystem = "strict";
@@ -64,6 +64,7 @@ in {
               PrivateTmp = true;
               PrivateDevices = true;
               PrivateIPC = true;
+              PrivateUsers = true;
               ProtectHostname = true;
               ProtectClock = true;
               ProtectKernelTunables = true;
