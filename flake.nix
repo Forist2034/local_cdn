@@ -1,26 +1,36 @@
 {
-  inputs = { nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05"; };
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+  };
 
-  outputs = { nixpkgs, ... }:
+  outputs =
+    { nixpkgs, ... }:
     let
       certgen = import ./certgen.nix;
       dns = import ./service/dns.nix;
       cache-proxy = import ./service/cache-proxy.nix;
-    in {
+    in
+    {
       packages = {
-        x86_64-linux = let pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        in {
-          local_cdn-certgen = pkgs.callPackage certgen.package { };
-          local_cdn-dns = pkgs.callPackage dns.package { };
-          local_cdn-proxy = pkgs.callPackage cache-proxy.package { };
-        };
+        x86_64-linux =
+          let
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          in
+          {
+            local_cdn-certgen = pkgs.callPackage certgen.package { };
+            local_cdn-dns = pkgs.callPackage dns.package { };
+            local_cdn-proxy = pkgs.callPackage cache-proxy.package { };
+          };
       };
       nixosModules = {
-        local_cdn = args@{ lib, pkgs, ... }:
+        local_cdn =
+          args@{ lib, pkgs, ... }:
           let
             local_cdn_lib = {
               cert = certgen.lib lib;
-              source = { npm = (import ./source/npm.nix) args; };
+              source = {
+                npm = (import ./source/npm.nix) args;
+              };
               library = {
                 dojo = (import ./library/dojo.nix) args;
                 jquery = (import ./library/jquery.nix) args;
@@ -28,7 +38,8 @@
               };
             };
             importWithLib = p: (import p) local_cdn_lib;
-          in {
+          in
+          {
             imports = [
               certgen.module
               (cache-proxy.module { cert = certgen.lib lib; })
@@ -39,5 +50,6 @@
           };
         local_cdn-dns = dns.module;
       };
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     };
 }

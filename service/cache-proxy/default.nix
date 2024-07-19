@@ -5,5 +5,7 @@ rustPlatform.buildRustPackage {
 
   src = ./.;
 
-  cargoLock = { lockFileContents = builtins.readFile ./Cargo.lock; };
+  cargoLock = {
+    lockFileContents = builtins.readFile ./Cargo.lock;
+  };
 }
