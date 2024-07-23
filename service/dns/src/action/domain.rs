@@ -1,12 +1,8 @@
-use std::{
-    borrow::{Borrow, Cow},
-    sync::Arc,
-};
+use std::{borrow::Borrow, collections::HashMap, sync::Arc};
 
 use hickory_proto::rr::domain::Name;
 use hickory_resolver::name_server::ConnectionProvider;
 use hickory_server::server::RequestHandler;
-use radix_trie::{Trie, TrieKey};
 use serde::Deserialize;
 
 use super::FromConfig;
@@ -23,14 +19,40 @@ pub struct Config<A> {
     pub actions: Vec<DomainConfig<A>>,
 }
 
-#[derive(PartialEq, Eq)]
-struct NameKey<'a>(Cow<'a, Name>);
-impl<'a> TrieKey for NameKey<'a> {
-    fn encode_bytes(&self) -> Vec<u8> {
-        let mut ret = Vec::with_capacity(self.0.len());
-        for l in self.0.iter().rev() {
-            ret.push(b'.');
-            ret.extend_from_slice(l);
+struct NameTree<A> {
+    value: Option<A>,
+    child: HashMap<Box<[u8]>, NameTree<A>>,
+}
+impl<A> NameTree<A> {
+    fn new() -> Self {
+        Self {
+            value: None,
+            child: HashMap::new(),
+        }
+    }
+    fn insert(&mut self, name: &Name, value: A) {
+        let mut pos = self;
+        for l in name.iter().rev() {
+            pos = pos
+                .child
+                .entry(l.to_vec().into_boxed_slice())
+                .or_insert_with(|| Self::new());
+        }
+        pos.value = Some(value)
+    }
+    fn get(&self, name: &Name) -> Option<&A> {
+        let mut pos = self;
+        let mut ret = self.value.as_ref();
+        for l in name.iter().rev() {
+            match pos.child.get(l) {
+                Some(v) => {
+                    pos = v;
+                    if let Some(val) = &v.value {
+                        ret = Some(val);
+                    }
+                }
+                None => break,
+            }
         }
         ret
     }
@@ -38,7 +60,7 @@ impl<'a> TrieKey for NameKey<'a> {
 
 pub struct DomainAction<A> {
     default: A,
-    domains: Trie<NameKey<'static>, Arc<A>>,
+    domains: NameTree<Arc<A>>,
 }
 impl<P: ConnectionProvider, A: FromConfig<P>> FromConfig<P> for DomainAction<A> {
     type Config<'a> = Config<A::Config<'a>>;
@@ -47,11 +69,11 @@ impl<P: ConnectionProvider, A: FromConfig<P>> FromConfig<P> for DomainAction<A> 
         config: Self::Config<'_>,
         upstream: &std::collections::HashMap<&'_ str, Arc<super::Upstream<P>>>,
     ) -> Result<Self, Self::Error> {
-        let mut domains = radix_trie::Trie::new();
+        let mut domains = NameTree::new();
         for cfg in config.actions {
             let act = Arc::new(A::from_config(cfg.action, upstream)?);
             for d in cfg.domains {
-                domains.insert(NameKey(Cow::Owned(d)), Arc::clone(&act));
+                domains.insert(&d, Arc::clone(&act));
             }
         }
         Ok(Self {
@@ -79,10 +101,7 @@ impl<A: RequestHandler> RequestHandler for DomainAction<A> {
         Self: 'async_trait,
     {
         let name: &Name = request.query().name().borrow();
-        match self
-            .domains
-            .get_ancestor_value(&NameKey(Cow::Borrowed(name)))
-        {
+        match self.domains.get(&name) {
             Some(a) => a.handle_request(request, response_handle),
             None => self.default.handle_request(request, response_handle),
         }
