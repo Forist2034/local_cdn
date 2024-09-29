@@ -33,7 +33,7 @@ in
             {
               description = "local cdn dns";
               serviceConfig = {
-                ExecStart = "${bin_drv}/bin/local_cdn-dns ${config_file}";
+                ExecStart = "${bin_drv}/bin/local_cdn-dns --log-output journal ${config_file}";
 
                 ProtectProc = "noaccess";
                 ProcSubset = "pid";
@@ -57,6 +57,7 @@ in
                 RestrictAddressFamilies = [
                   "AF_INET"
                   "AF_INET6"
+                  "AF_UNIX"
                 ];
                 RestrictNamespaces = true;
                 LockPersonality = true;

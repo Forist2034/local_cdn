@@ -1,10 +1,11 @@
 use std::{
-    env::args, fs::Permissions, os::unix::fs::PermissionsExt, path::PathBuf, process::ExitCode,
+    fmt::Display, fs::Permissions, os::unix::fs::PermissionsExt, path::PathBuf, process::ExitCode,
     str::FromStr,
 };
 
 use anyhow::Context;
 use bytes::Bytes;
+use clap::{Arg, ArgGroup, Args, FromArgMatches, Parser};
 use http::{header, uri::Authority, Request, Response, StatusCode};
 use http_body_util::{Either, Full};
 use hyper::{
@@ -16,9 +17,73 @@ use local_cdn_proxy::{CachedResponse, ProxyError};
 use tracing::Instrument;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+#[derive(Debug, Clone, Copy, Default, clap::ValueEnum)]
+enum LogOutput {
+    #[default]
+    Stdout,
+    Journal,
+}
+impl Display for LogOutput {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Stdout => "stdout",
+            Self::Journal => "journal",
+        })
+    }
+}
+#[derive(Debug, Clone)]
 enum Listen {
     Unix(String),
     Tcp(std::net::SocketAddr),
+}
+
+#[derive(Debug, clap::Parser)]
+struct Cli {
+    #[arg(long, default_value_t)]
+    log_output: LogOutput,
+    #[command(flatten)]
+    listen: Listen,
+    root: String,
+    server: String,
+}
+
+impl Args for Listen {
+    fn augment_args(cmd: clap::Command) -> clap::Command {
+        cmd.arg(Arg::new("unix").long("unix"))
+            .arg(
+                Arg::new("tcp")
+                    .long("tcp")
+                    .value_parser(clap::value_parser!(std::net::SocketAddr)),
+            )
+            .group(ArgGroup::new("listen").args(["unix", "tcp"]).required(true))
+    }
+    fn augment_args_for_update(cmd: clap::Command) -> clap::Command {
+        Self::augment_args(cmd)
+    }
+}
+impl FromArgMatches for Listen {
+    fn from_arg_matches(matches: &clap::ArgMatches) -> Result<Self, clap::Error> {
+        match (
+            matches.get_one::<String>("unix"),
+            matches.get_one::<std::net::SocketAddr>("tcp"),
+        ) {
+            (Some(u), None) => Ok(Self::Unix(u.clone())),
+            (None, Some(t)) => Ok(Self::Tcp(t.clone())),
+            _ => unreachable!(),
+        }
+    }
+    fn update_from_arg_matches(&mut self, matches: &clap::ArgMatches) -> Result<(), clap::Error> {
+        match (
+            matches.get_one::<String>("unix"),
+            matches.get_one::<std::net::SocketAddr>("tcp"),
+        ) {
+            (Some(u), None) => *self = Self::Unix(u.clone()),
+            (None, Some(t)) => *self = Self::Tcp(t.clone()),
+            (None, None) => (),
+            _ => unreachable!(),
+        }
+        Ok(())
+    }
 }
 
 async fn serve_connection<S, B, I>(
@@ -175,50 +240,41 @@ fn run(root: PathBuf, server: String, listen: Listen) -> anyhow::Result<()> {
 }
 
 fn main() -> ExitCode {
-    let (root, server, listen) = {
-        let mut arg = args();
-        arg.next();
-        let root = arg.next().expect("missing root path");
-        let server = arg.next().expect("missing server name");
-        let listen = match (
-            arg.next().expect("expect protocol").as_str(),
-            arg.next().expect("expect address"),
-        ) {
-            ("unix", p) => Listen::Unix(p),
-            ("tcp", p) => Listen::Tcp(p.parse().expect("socket address")),
-            _ => panic!("unknown protocol"),
-        };
-        (PathBuf::from(root), server, listen)
-    };
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer())
-        .with({
-            #[cfg(feature = "local")]
-            {
-                tracing_subscriber::filter::EnvFilter::builder()
-                    .with_default_directive(tracing_subscriber::filter::LevelFilter::INFO.into())
-                    .from_env()
-                    .unwrap()
+    let cli = Cli::parse();
+
+    let reg = tracing_subscriber::registry().with({
+        #[cfg(feature = "local")]
+        {
+            tracing_subscriber::filter::EnvFilter::builder()
+                .with_default_directive(tracing_subscriber::filter::LevelFilter::INFO.into())
+                .from_env()
+                .unwrap()
+        }
+        #[cfg(not(feature = "local"))]
+        {
+            use tracing_subscriber::filter::LevelFilter;
+            match std::env::var("RUST_LOG") {
+                Ok(v) => match v.as_str() {
+                    "trace" => LevelFilter::TRACE,
+                    "debug" => LevelFilter::DEBUG,
+                    "info" => LevelFilter::INFO,
+                    "warn" => LevelFilter::WARN,
+                    "error" => LevelFilter::ERROR,
+                    "off" => LevelFilter::OFF,
+                    _ => panic!("invalid log filter"),
+                },
+                Err(_) => LevelFilter::INFO,
             }
-            #[cfg(not(feature = "local"))]
-            {
-                use tracing_subscriber::filter::LevelFilter;
-                match std::env::var("RUST_LOG") {
-                    Ok(v) => match v.as_str() {
-                        "trace" => LevelFilter::TRACE,
-                        "debug" => LevelFilter::DEBUG,
-                        "info" => LevelFilter::INFO,
-                        "warn" => LevelFilter::WARN,
-                        "error" => LevelFilter::ERROR,
-                        "off" => LevelFilter::OFF,
-                        _ => panic!("invalid log filter"),
-                    },
-                    Err(_) => LevelFilter::INFO,
-                }
-            }
-        })
-        .init();
-    match run(root, server, listen) {
+        }
+    });
+    match cli.log_output {
+        LogOutput::Stdout => reg.with(tracing_subscriber::fmt::layer()).init(),
+        LogOutput::Journal => reg
+            .with(tracing_journald::layer().expect("failed to open journal"))
+            .init(),
+    }
+
+    match run(cli.root.into(), cli.server, cli.listen) {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             tracing::error!("error: {e:?}");

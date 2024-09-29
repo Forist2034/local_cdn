@@ -73,10 +73,6 @@ pub mod config {
     #[derive(Deserialize)]
     #[serde(bound = "'de:'a")]
     pub struct Config<'a> {
-        #[serde(default)]
-        pub log_level: LogLevel,
-        #[serde(default)]
-        pub json_log: Option<&'a str>,
         pub upstream: HashMap<&'a str, Upstream>,
         pub servers: HashMap<&'a str, Server<'a>>,
     }

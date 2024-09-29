@@ -1,7 +1,6 @@
-use std::{
-    borrow::Cow, env, error, fmt::Display, fs, process::ExitCode, sync::Arc, time::Duration,
-};
+use std::{borrow::Cow, error, fmt::Display, fs, process::ExitCode, sync::Arc, time::Duration};
 
+use clap::Parser;
 use tracing::{level_filters::LevelFilter, Instrument};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -9,6 +8,44 @@ use local_cdn_dns::{
     action::{DomainAction, FromConfig},
     config::Listen,
 };
+
+#[derive(Debug, Clone, Copy, Default, clap::ValueEnum)]
+pub enum LogLevel {
+    Off,
+    Error,
+    Warn,
+    #[default]
+    Info,
+    Debug,
+    Trace,
+}
+impl Display for LogLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Off => "off",
+            Self::Error => "error",
+            Self::Warn => "warn",
+            Self::Info => "info",
+            Self::Debug => "debug",
+            Self::Trace => "trace",
+        })
+    }
+}
+
+#[derive(Debug, Clone, clap::ValueEnum)]
+enum LogOutput {
+    Stdout,
+    Journal,
+}
+
+#[derive(Debug, clap::Parser)]
+struct Cli {
+    #[arg(long, default_value_t)]
+    log_level: LogLevel,
+    #[arg(long)]
+    log_output: LogOutput,
+    config: String,
+}
 
 #[derive(Debug)]
 struct Error {
@@ -95,44 +132,28 @@ async fn start_server(
     server.block_until_done().await.context("server error")
 }
 
-fn run() -> Result<ExitCode, Error> {
-    let config_txt = fs::read({
-        let mut a = env::args();
-        let _ = a.next();
-        a.next().ok_or_else(|| Error {
-            message: Cow::Borrowed("missing config path"),
-            source: None,
-        })?
-    })
-    .context("failed to read config file")?;
-    let config: local_cdn_dns::config::Config<'_> =
-        serde_json::from_slice(&config_txt).context("failed to decode config file")?;
+fn run(cli: Cli) -> Result<ExitCode, Error> {
     {
-        let reg = tracing_subscriber::registry()
-            .with(match config.log_level {
-                local_cdn_dns::config::LogLevel::Off => LevelFilter::OFF,
-                local_cdn_dns::config::LogLevel::Error => LevelFilter::ERROR,
-                local_cdn_dns::config::LogLevel::Warn => LevelFilter::WARN,
-                local_cdn_dns::config::LogLevel::Info => LevelFilter::INFO,
-                local_cdn_dns::config::LogLevel::Debug => LevelFilter::DEBUG,
-                local_cdn_dns::config::LogLevel::Trace => LevelFilter::TRACE,
-            })
-            .with(tracing_subscriber::fmt::layer());
-        match &config.json_log {
-            Some(l) => reg
-                .with(
-                    tracing_subscriber::fmt::layer().json().with_writer(
-                        fs::File::options()
-                            .create(true)
-                            .write(true)
-                            .open(l)
-                            .context("failed to open log file")?,
-                    ),
-                )
+        let reg = tracing_subscriber::registry().with(match cli.log_level {
+            LogLevel::Off => LevelFilter::OFF,
+            LogLevel::Error => LevelFilter::ERROR,
+            LogLevel::Warn => LevelFilter::WARN,
+            LogLevel::Info => LevelFilter::INFO,
+            LogLevel::Debug => LevelFilter::DEBUG,
+            LogLevel::Trace => LevelFilter::TRACE,
+        });
+        match cli.log_output {
+            LogOutput::Stdout => reg.with(tracing_subscriber::fmt::layer()).init(),
+            LogOutput::Journal => reg
+                .with(tracing_journald::layer().context("failed to init journald output")?)
                 .init(),
-            None => reg.init(),
         }
     }
+
+    let config_txt = fs::read(cli.config).context("failed to read config file")?;
+    let config: local_cdn_dns::config::Config<'_> =
+        serde_json::from_slice(&config_txt).context("failed to decode config file")?;
+
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .enable_all()
         .build()
@@ -187,7 +208,8 @@ fn run() -> Result<ExitCode, Error> {
 }
 
 fn main() -> ExitCode {
-    match run() {
+    let cli = Cli::parse();
+    match run(cli) {
         Ok(c) => c,
         Err(e) => {
             eprintln!("error: {e:?}");

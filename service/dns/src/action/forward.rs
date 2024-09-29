@@ -111,6 +111,7 @@ impl RequestHandler for Forward<TokioConnectionProvider> {
                     Err(e) => {
                         tracing::error!(
                             error = tracing::field::debug(e.clone()),
+                            upstream = r.name,
                             "failed to forward request to upstream {}",
                             r.name
                         );

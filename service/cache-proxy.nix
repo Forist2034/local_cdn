@@ -63,9 +63,10 @@ in
                 serviceConfig = {
                   ExecStart = ''
                     ${bin_drv}/bin/local_cdn-proxy \
+                      --log-output journal \
+                      --unix "''${RUNTIME_DIRECTORY}/proxy.sock" \
                       ''${CACHE_DIRECTORY} \
-                      %i unix \
-                      "''${RUNTIME_DIRECTORY}/proxy.sock"
+                      %i
                   '';
                   RuntimeDirectory = [ "local_cdn/proxy/%i" ];
                   CacheDirectory = [ "local_cdn/proxy/%i" ];
